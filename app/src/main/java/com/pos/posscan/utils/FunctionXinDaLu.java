@@ -24,6 +24,12 @@ import java.util.Date;
 public class FunctionXinDaLu {
     private Activity mActivity;
     public static final int XINDALUREQUESTCODE = 8001;
+    public static final int SYSTEMSCANREQUESTCODE = 9001; //扫描系统的二维码
+    /*
+     *系统二维码结构
+     *  { "ordercode":2001,"orderMoney":80}
+     *
+     */
 
     private static FunctionXinDaLu instance;
 
@@ -142,7 +148,7 @@ public class FunctionXinDaLu {
         }
     }
 
-    public void weixinPay(float money) {
+    public void weixinPay(float money,String orderCode) {
         try {
             ComponentName component = new ComponentName("com.newland.caishen", "com.newland.caishen.ui.activity.MainActivity");
             Intent intent = new Intent();
@@ -154,7 +160,7 @@ public class FunctionXinDaLu {
             bundle.putString("proc_tp", "00");
             bundle.putString("proc_cd", "660000");
             bundle.putString("amt", Arith.getDecimalString(money));
-            bundle.putString("order_no", "");
+            bundle.putString("order_no", orderCode);
             bundle.putString("appid", "com.nld.trafficmanage");
             bundle.putString("time_stamp", DateUtil.getDate(new Date()));
             bundle.putString("print_info", "订单商品明细单价等xxxxxx");
@@ -168,7 +174,7 @@ public class FunctionXinDaLu {
         }
     }
 
-    public void aliPay(float money) {
+    public void aliPay(float money,String orderCode) {
         try {
             ComponentName component = new ComponentName("com.newland.caishen", "com.newland.caishen.ui.activity.MainActivity");
             Intent intent = new Intent();
@@ -180,7 +186,7 @@ public class FunctionXinDaLu {
             bundle.putString("proc_tp", "00");
             bundle.putString("proc_cd", "660000");
             bundle.putString("amt", Arith.getDecimalString(money));
-            bundle.putString("order_no", "");
+            bundle.putString("order_no", orderCode);
             bundle.putString("appid", "com.nld.trafficmanage");
             bundle.putString("time_stamp", DateUtil.getDate(new Date()));
             bundle.putString("print_info", "订单商品明细单价等xxxxxx");

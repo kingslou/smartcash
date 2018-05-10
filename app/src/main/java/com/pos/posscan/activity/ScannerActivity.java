@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -27,8 +29,6 @@ public class ScannerActivity extends AppCompatActivity implements ZBarScannerVie
     private ZBarScannerView mScannerView;
     @BindView(R.id.content_frame)
     ViewGroup contentFrame;
-    @BindView(R.id.btn_toolbar_back)
-    RelativeLayout relativeLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,12 +38,18 @@ public class ScannerActivity extends AppCompatActivity implements ZBarScannerVie
         mScannerView = new ZBarScannerView(this);
         mScannerView.setAutoFocus(true);
         contentFrame.addView(mScannerView);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 
-    @OnClick(R.id.btn_toolbar_back)
-    void gotoBack() {
-        finish();
-    }
 
     @Override
     public void handleResult(Result rawResult) {
