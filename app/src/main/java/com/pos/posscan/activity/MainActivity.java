@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                     try {
                         JSONObject item = new JSONObject(datastr1);
                         String orderCode = item.getString("orderCode");
-                        String money = item.getString("money");
+                        String money = item.getString("orderMoney");
                         if (!TextUtils.isEmpty(orderCode) && !TextUtils.isEmpty(money)) {
                             FunctionXinDaLu.getInstance().aliPay(Float.parseFloat(money), orderCode);
                         }
