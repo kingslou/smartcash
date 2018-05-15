@@ -1,7 +1,14 @@
 package com.pos.posscan.api;
 
 
+import com.pos.posscan.AppConfig;
+
+import java.io.IOException;
+
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -22,14 +29,22 @@ public class RestDataSource {
 
     private static RestDataSource restDataSource;
 
-    private String BASE_URL = "http://af.jxbazong.com:8080/";
+    private String BASE_URL = "http://remeberme.mynatapp.cc";
 
     private void init() {
-       // HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-        //logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-
         OkHttpClient client = new OkHttpClient();
-        //client.interceptors().add(logging);
+        client.interceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request original = chain.request();
+
+                Request request = original.newBuilder()
+                        .header("x", AppConfig.HEADERX)
+                        .method(original.method(), original.body())
+                        .build();
+                return chain.proceed(request);
+            }
+        });
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(client)

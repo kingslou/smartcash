@@ -3,7 +3,8 @@ package com.pos.posscan.api;
 import android.database.Observable;
 
 
-import retrofit2.http.Body;
+import com.pos.posscan.bean.PrePayFeed;
+
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 
@@ -15,5 +16,13 @@ import retrofit2.http.POST;
 
 public interface RetrofitInterface {
 
+
+    @Headers("Content-Type:application/json")
+    @POST("/propertyapi/pos/prePay")
+    Observable<PrePayFeed> prePay();
+
+    @Headers("Content-Type:application/json")
+    @POST("/propertyapi/pos/prePay")
+    Observable<PrePayFeed> pospayNotify();
 
 }
