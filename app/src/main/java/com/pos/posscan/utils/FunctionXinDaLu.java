@@ -27,25 +27,14 @@ public class FunctionXinDaLu {
     public static final int SYSTEMSCANREQUESTCODE = 9001; //扫描系统的二维码
     /*
      *系统二维码结构
-     *  { "ordercode":2001,"orderMoney":80}
+     *  { "orderCode":2001,"orderMoney":80}
      *
      */
 
     private static FunctionXinDaLu instance;
 
-    private FunctionXinDaLu(){
-        mActivity = (Activity) App.getContext();
-    }
-
-    public static FunctionXinDaLu getInstance() {
-        if (instance == null) {
-            synchronized (FunctionXinDaLu.class) {
-                if (instance == null) {
-                    instance = new FunctionXinDaLu();
-                }
-            }
-        }
-        return  instance;
+    public FunctionXinDaLu(Activity activity){
+       this.mActivity = activity;
     }
 
 
@@ -218,6 +207,9 @@ public class FunctionXinDaLu {
                                 default:
                                     break;
                             }
+                        }else{
+                            //交易失败
+
                         }
                     }
                     break;

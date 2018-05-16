@@ -5,13 +5,13 @@ package com.pos.posscan.bean;
  */
 public class PrePayFeed {
 
-        private  PrePayBean result;
+    private  String result;
 
-    public void setResult(PrePayBean result) {
+    public void setResult(String result) {
         this.result = result;
     }
 
-    public PrePayBean getResult() {
+    public String getResult() {
         return result;
     }
 }

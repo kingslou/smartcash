@@ -2,6 +2,9 @@ package com.pos.posscan.bean;
 
 public class PosPayNotifyPoJo {
 
+
+
+
     /*******************************以下几个字段是娄总调用第一个API的返回信息的原样返回*****************************/
 
     //POS扫PC上的订单码后，通过调用第一个API返回的心中的 业务主键
@@ -37,5 +40,87 @@ public class PosPayNotifyPoJo {
     private String posPayDetail;
 
 
+    public String getBizGuid() {
+        return bizGuid;
+    }
 
+    public void setBizGuid(String bizGuid) {
+        this.bizGuid = bizGuid;
+    }
+
+    public String getPreKey() {
+        return preKey;
+    }
+
+    public void setPreKey(String preKey) {
+        this.preKey = preKey;
+    }
+
+    public String getNotifyTransactionId() {
+        return notifyTransactionId;
+    }
+
+    public void setNotifyTransactionId(String notifyTransactionId) {
+        this.notifyTransactionId = notifyTransactionId;
+    }
+
+    public String getDevice() {
+        return device;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
+    }
+
+    public String getTotalAmountPaid() {
+        return totalAmountPaid;
+    }
+
+    public void setTotalAmountPaid(String totalAmountPaid) {
+        this.totalAmountPaid = totalAmountPaid;
+    }
+
+    public String getNotifyResultCode() {
+        return notifyResultCode;
+    }
+
+    public void setNotifyResultCode(String notifyResultCode) {
+        this.notifyResultCode = notifyResultCode;
+    }
+
+    public String getNotifyTimeEnd() {
+        return notifyTimeEnd;
+    }
+
+    public void setNotifyTimeEnd(String notifyTimeEnd) {
+        this.notifyTimeEnd = notifyTimeEnd;
+    }
+
+    public String getFailedReason() {
+        return failedReason;
+    }
+
+    public void setFailedReason(String failedReason) {
+        this.failedReason = failedReason;
+    }
+
+    public String getPayType() {
+        return payType;
+    }
+
+    public void setPayType(String payType) {
+        this.payType = payType;
+    }
+
+    public String getPosPayDetail() {
+        return posPayDetail;
+    }
+
+    public void setPosPayDetail(String posPayDetail) {
+        this.posPayDetail = posPayDetail;
+    }
+
+    public PosPayNotifyPoJo(String bizGuid) {
+        this.bizGuid = bizGuid;
+    }
 }

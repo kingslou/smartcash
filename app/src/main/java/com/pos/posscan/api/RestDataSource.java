@@ -1,7 +1,14 @@
 package com.pos.posscan.api;
 
 
+import android.util.Log;
+
 import com.pos.posscan.AppConfig;
+import com.pos.posscan.bean.PosPayNotifyFeed;
+import com.pos.posscan.bean.PosPayNotifyPoJo;
+import com.pos.posscan.bean.PrePayBean;
+import com.pos.posscan.bean.PrePayFeed;
+import com.pos.posscan.bean.ScanPoJo;
 
 import java.io.IOException;
 
@@ -9,6 +16,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -29,22 +37,21 @@ public class RestDataSource {
 
     private static RestDataSource restDataSource;
 
-    private String BASE_URL = "http://remeberme.mynatapp.cc";
+    private String BASE_URL = "http://remeberme.mynatapp.cc/";
+    OkHttpClient client;
 
     private void init() {
-        OkHttpClient client = new OkHttpClient();
-        client.interceptors().add(new Interceptor() {
+        HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor(new HttpLoggingInterceptor.Logger() {
             @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request original = chain.request();
-
-                Request request = original.newBuilder()
-                        .header("x", AppConfig.HEADERX)
-                        .method(original.method(), original.body())
-                        .build();
-                return chain.proceed(request);
+            public void log(String message) {
+                //打印retrofit日志
+                Log.i("RetrofitLog","retrofitBack = "+message);
             }
         });
+
+
+        loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        client= new OkHttpClient.Builder().addInterceptor(loggingInterceptor).build();
 
         Retrofit retrofit = new Retrofit.Builder()
                 .client(client)
@@ -67,6 +74,15 @@ public class RestDataSource {
 
         return instance;
     }
+
+    public static void scanRequest(Observer<PrePayFeed> observer) {
+        setSubscribe(getAPIService().prePay(new ScanPoJo("test",AppConfig.HEADERX)), observer);
+    }
+
+    public static void notify(PrePayBean prePayBean, Observer<PosPayNotifyFeed> observer) {
+        setSubscribe(getAPIService().pospayNotify(prePayBean.getCbUrl(),new PosPayNotifyPoJo("")), observer);
+    }
+
 
 
     /**

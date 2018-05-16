@@ -13,5 +13,7 @@ public class AppConfig {
 
     public static final String ISCHECKACCOUNT = "ISCHECKACCOUNT";
 
-    public static final String HEADERX = "";
+    public static  String HEADERX = "";
+
+    public static String NOTIFYURL = "";
 }
