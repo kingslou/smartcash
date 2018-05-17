@@ -34,7 +34,7 @@ public class ScanActivity extends AppCompatActivity implements QRCodeView.Delega
 
         mQRCodeView = (ZBarView) findViewById(R.id.zbarview);
         mQRCodeView.setDelegate(this);
-        mQRCodeView.startSpot();
+        mQRCodeView.startSpotDelay(100);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_material);

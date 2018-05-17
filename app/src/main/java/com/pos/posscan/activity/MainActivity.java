@@ -51,13 +51,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-//        ZXingLibrary.initDisplayOpinion(this);
     }
 
     @OnClick(R.id.item_yhk)
     public void onClickXianJinBtn() {
-        Intent intent = new Intent(this, ScanActivity.class);
-        startActivityForResult(intent, YHKSCANNERCODE);
+        FunctionXinDaLu functionXinDaLu = new FunctionXinDaLu(MainActivity.this);
+        functionXinDaLu.bankCardPay(0.1f,"");
+//        Intent intent = new Intent(MainActivity.this, ScanActivity.class);
+//        startActivityForResult(intent, YHKSCANNERCODE);
     }
 
     @OnClick(R.id.item_zfb)
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.item_wx)
     public void onClickWeiChatPayBtn() {
-        Intent intent = new Intent(this, ScanActivity.class);
+        Intent intent = new Intent(MainActivity.this, ScanActivity.class);
         startActivityForResult(intent, WXSCANNERCODE);
     }
 
@@ -233,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
                                     currentPrePayBean = prePayBean;
                                     AppConfig.NOTIFYURL = prePayBean.getCbUrl();
                                     FunctionXinDaLu functionXinDaLu = new FunctionXinDaLu(MainActivity.this);
-                                    functionXinDaLu.bankCardPay(Float.parseFloat(prePayBean.getTotalAmountDue()), prePayBean.getBizGuid());
+                                    functionXinDaLu.bankCardPay(Float.parseFloat(prePayBean.getTotalAmountDue()), "");
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();

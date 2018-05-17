@@ -134,6 +134,7 @@ public class FunctionXinDaLu {
             Toast.makeText(mActivity, "当前设备没有新大陆支付环境", Toast.LENGTH_LONG).show();
         } catch (Exception e) {
             //TODO:
+            Toast.makeText(mActivity, e.toString(), Toast.LENGTH_LONG).show();
         }
     }
 

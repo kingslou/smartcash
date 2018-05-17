@@ -3,9 +3,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     style="@style/MatchMatch">
 
+
+    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="请扫码电脑二维码"
+            android:layout_marginLeft="10dp"
+            android:textColor="@color/color_label_white"
+            android:textSize="14sp" />
+    </android.support.v7.widget.Toolbar>
+
     <cn.bingoogolapple.qrcode.zbar.ZBarView
         android:id="@+id/zbarview"
         style="@style/MatchMatch"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
@@ -28,25 +48,8 @@
         app:qrcv_isTipTextBelowRect="false"
         app:qrcv_maskColor="#33FFFFFF"
         app:qrcv_qrCodeTipText="将二维码/条码放入框内，即可自动扫描"
-        app:qrcv_rectWidth="200dp"
+        app:qrcv_rectWidth="240dp"
         app:qrcv_scanLineColor="@color/colorPrimaryDark"
         app:qrcv_toolbarHeight="56dp"
         app:qrcv_topOffset="20dp" />
-
-    <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:layout_alignParentTop="true"
-        android:background="@color/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar" >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="请扫码电脑二维码"
-            android:layout_marginLeft="10dp"
-            android:textColor="@color/color_label_white"
-            android:textSize="14sp" />
-    </android.support.v7.widget.Toolbar>
 </RelativeLayout>
