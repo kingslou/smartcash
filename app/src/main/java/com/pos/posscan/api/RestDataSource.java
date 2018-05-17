@@ -79,8 +79,8 @@ public class RestDataSource {
         setSubscribe(getAPIService().prePay(new ScanPoJo("test",AppConfig.HEADERX)), observer);
     }
 
-    public static void notify(PrePayBean prePayBean, Observer<PosPayNotifyFeed> observer) {
-        setSubscribe(getAPIService().pospayNotify(prePayBean.getCbUrl(),new PosPayNotifyPoJo("")), observer);
+    public static void notify(PrePayBean prePayBean,PosPayNotifyPoJo posPayNotifyPoJo, Observer<PosPayNotifyFeed> observer) {
+        setSubscribe(getAPIService().pospayNotify(prePayBean.getCbUrl(),posPayNotifyPoJo), observer);
     }
 
 

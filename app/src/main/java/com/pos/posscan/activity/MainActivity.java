@@ -1,6 +1,7 @@
 package com.pos.posscan.activity;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothClass;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,15 +14,14 @@ import com.pos.posscan.AppConfig;
 import com.pos.posscan.R;
 import com.pos.posscan.api.RestDataSource;
 import com.pos.posscan.bean.PosPayNotifyFeed;
+import com.pos.posscan.bean.PosPayNotifyPoJo;
 import com.pos.posscan.bean.PrePayBean;
 import com.pos.posscan.bean.PrePayFeed;
-import com.pos.posscan.utils.Arith;
+import com.pos.posscan.utils.DateUtil;
 import com.pos.posscan.utils.FunctionXinDaLu;
-import com.uuzuche.lib_zxing.activity.CaptureActivity;
-import com.uuzuche.lib_zxing.activity.CodeUtils;
-import com.uuzuche.lib_zxing.activity.ZXingLibrary;
 
-import org.json.JSONObject;
+
+import java.util.Date;
 
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -35,29 +35,60 @@ public class MainActivity extends AppCompatActivity {
     private static final int WXSCANNERCODE = 1001;
     private static final int ZFBSCANNERCODE = 1002;
     private static final int YHKSCANNERCODE = 1003;
-    private PrePayBean prePayBean;
-
+    private PrePayBean currentPrePayBean;
+    private String currentPayType;
     private String currentOrderCode;
     private int currentTransType;
+
+    private static final String YHKPAYTYPE = "0";
+    private static final String WXPAYTYPE = "1";
+    private static final String ZFBPAYTYPE = "2";
+    private static final String YLMPAYTYPE = "3";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        ZXingLibrary.initDisplayOpinion(this);
+//        ZXingLibrary.initDisplayOpinion(this);
     }
 
     @OnClick(R.id.item_yhk)
     public void onClickXianJinBtn() {
-//        Intent intent = new Intent(this, ScannerActivity.class);
-//        startActivityForResult(intent, YHKSCANNERCODE);
+        Intent intent = new Intent(this, ScanActivity.class);
+        startActivityForResult(intent, YHKSCANNERCODE);
+    }
 
-//        Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
-//        startActivityForResult(intent, YHKSCANNERCODE);
+    @OnClick(R.id.item_zfb)
+    public void onClickAliPayBtn() {
+        Intent intent = new Intent(MainActivity.this, ScanActivity.class);
+        startActivityForResult(intent, ZFBSCANNERCODE);
+    }
 
-        AppConfig.HEADERX = "A8888888888888888888888888888888Z";
-        RestDataSource.scanRequest(new Observer<PrePayFeed>() {
+    @OnClick(R.id.item_wx)
+    public void onClickWeiChatPayBtn() {
+        Intent intent = new Intent(this, ScanActivity.class);
+        startActivityForResult(intent, WXSCANNERCODE);
+    }
+
+    private void notifyPc(Bundle bundle){
+        String transInfo = "";
+        if(bundle!=null){
+            transInfo = bundle.getString("txndetail");
+        }
+        PosPayNotifyPoJo posPayNotifyPoJo = new PosPayNotifyPoJo(currentPrePayBean.getBizGuid());
+        posPayNotifyPoJo.setDevice(android.os.Build.MODEL);
+        posPayNotifyPoJo.setNotifyTimeEnd(DateUtil.getDate(new Date()));
+        posPayNotifyPoJo.setPayType(currentPayType);
+        posPayNotifyPoJo.setPreKey(AppConfig.HEADERX);
+        posPayNotifyPoJo.setNotifyTransactionId(AppConfig.HEADERX);
+        posPayNotifyPoJo.setTotalAmountPaid(currentPrePayBean.getTotalAmountDue());
+        posPayNotifyPoJo.setNotifyResultCode("SUCCESS");
+        posPayNotifyPoJo.setPosPayDetail(transInfo);
+        posPayNotifyPoJo.setFailedReason("");
+
+        RestDataSource.notify(currentPrePayBean,posPayNotifyPoJo, new Observer<PosPayNotifyFeed>() {
             @Override
             public void onCompleted() {
 
@@ -69,50 +100,16 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNext(PrePayFeed prePayFeed) {
-                if (prePayFeed != null) {
-                    String payStr = prePayFeed.getResult();
-                    prePayBean = new Gson().fromJson(payStr,PrePayBean.class);
-                    AppConfig.NOTIFYURL = prePayBean.getCbUrl();
-                    RestDataSource.notify(prePayBean, new Observer<PosPayNotifyFeed>() {
-                        @Override
-                        public void onCompleted() {
-
-                        }
-
-                        @Override
-                        public void onError(Throwable e) {
-                            Log.e("eee", e.toString());
-                        }
-
-                        @Override
-                        public void onNext(PosPayNotifyFeed posPayNotifyFeed) {
-                            if(posPayNotifyFeed!=null){
-
-                            }
-                        }
-                    });
+            public void onNext(PosPayNotifyFeed posPayNotifyFeed) {
+                if (posPayNotifyFeed != null) {
+                    if(posPayNotifyFeed.isSuccess()){
+                        Toast.makeText(MainActivity.this, "通知成功", Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(MainActivity.this, "通知失败"+posPayNotifyFeed.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         });
-    }
-
-    @OnClick(R.id.item_zfb)
-    public void onClickAliPayBtn() {
-//        Intent intent = new Intent(this, ScannerActivity.class);
-//        startActivityForResult(intent, ZFBSCANNERCODE);
-
-        Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
-        startActivityForResult(intent, ZFBSCANNERCODE);
-    }
-
-    @OnClick(R.id.item_wx)
-    public void onClickWeiChatPayBtn() {
-//        Intent intent = new Intent(this, ScannerActivity.class);
-//        startActivityForResult(intent, WXSCANNERCODE);
-
-        Intent intent = new Intent(MainActivity.this, CaptureActivity.class);
-        startActivityForResult(intent, WXSCANNERCODE);
     }
 
     @Override
@@ -127,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
                             switch (operation) {
                                 case 1:
                                     Toast.makeText(this, "交易成功", Toast.LENGTH_LONG).show();
+                                    //通知客户端更新字段
+                                    notifyPc(bundle);
                                     break;
                                 case 0:
                                     Toast.makeText(this, "撤销成功", Toast.LENGTH_LONG).show();
@@ -141,84 +140,107 @@ public class MainActivity extends AppCompatActivity {
                     if (null == data) {
                         return;
                     }
-                    if (data.getExtras().getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
-                        String result = data.getExtras().getString(CodeUtils.RESULT_STRING);
-                        AppConfig.HEADERX = result;
-                        RestDataSource.scanRequest(new Observer<PrePayFeed>() {
-                            @Override
-                            public void onCompleted() {
+                    AppConfig.HEADERX = data.getStringExtra("data");
+                    RestDataSource.scanRequest(new Observer<PrePayFeed>() {
+                        @Override
+                        public void onCompleted() {
 
-                            }
+                        }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e("eee", e.toString());
-                            }
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("eee", e.toString());
+                            Toast.makeText(MainActivity.this, "请求失败" + e.toString(), Toast.LENGTH_LONG).show();
+                        }
 
-                            @Override
-                            public void onNext(PrePayFeed prePayFeed) {
+                        @Override
+                        public void onNext(PrePayFeed prePayFeed) {
+                            try {
                                 if (prePayFeed != null) {
-
+                                    PrePayBean prePayBean = new Gson().fromJson(prePayFeed.getResult(), PrePayBean.class);
+                                    currentPrePayBean = prePayBean;
+                                    currentPayType = WXPAYTYPE;
+                                    AppConfig.NOTIFYURL = prePayBean.getCbUrl();
+                                    FunctionXinDaLu functionXinDaLu = new FunctionXinDaLu(MainActivity.this);
+                                    functionXinDaLu.weixinPay(Float.parseFloat(prePayBean.getTotalAmountDue()), prePayBean.getBizGuid());
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        });
-                    }
+                        }
+                    });
                     break;
                 case ZFBSCANNERCODE:
                     if (null == data) {
                         return;
                     }
-                    if (data.getExtras().getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
-                        String result = data.getExtras().getString(CodeUtils.RESULT_STRING);
-                        AppConfig.HEADERX = " A8888888888888888888888888888888Z";
-                        RestDataSource.scanRequest(new Observer<PrePayFeed>() {
-                            @Override
-                            public void onCompleted() {
+                    AppConfig.HEADERX = data.getStringExtra("data");
+                    RestDataSource.scanRequest(new Observer<PrePayFeed>() {
+                        @Override
+                        public void onCompleted() {
 
-                            }
+                        }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e("eee", e.toString());
-                            }
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("eee", e.toString());
+                            Toast.makeText(MainActivity.this, "请求失败" + e.toString(), Toast.LENGTH_LONG).show();
+                        }
 
-                            @Override
-                            public void onNext(PrePayFeed prePayFeed) {
+                        @Override
+                        public void onNext(PrePayFeed prePayFeed) {
+                            try {
                                 if (prePayFeed != null) {
-
+                                    PrePayBean prePayBean = new Gson().fromJson(prePayFeed.getResult(), PrePayBean.class);
+                                    currentPrePayBean = prePayBean;
+                                    currentPayType = ZFBPAYTYPE;
+                                    AppConfig.NOTIFYURL = prePayBean.getCbUrl();
+                                    FunctionXinDaLu functionXinDaLu = new FunctionXinDaLu(MainActivity.this);
+                                    functionXinDaLu.aliPay(Float.parseFloat(prePayBean.getTotalAmountDue()), prePayBean.getBizGuid()+"2");
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                onError(e);
                             }
-                        });
-                    }
 
+                        }
+                    });
                     break;
 
                 case YHKSCANNERCODE:
                     if (null == data) {
                         return;
                     }
-                    if (data.getExtras().getInt(CodeUtils.RESULT_TYPE) == CodeUtils.RESULT_SUCCESS) {
-                        String result = data.getExtras().getString(CodeUtils.RESULT_STRING);
-                        AppConfig.HEADERX = result;
-                        RestDataSource.scanRequest(new Observer<PrePayFeed>() {
-                            @Override
-                            public void onCompleted() {
+                    AppConfig.HEADERX = data.getStringExtra("data");
+                    RestDataSource.scanRequest(new Observer<PrePayFeed>() {
+                        @Override
+                        public void onCompleted() {
 
-                            }
+                        }
 
-                            @Override
-                            public void onError(Throwable e) {
-                                Log.e("eee", e.toString());
-                            }
+                        @Override
+                        public void onError(Throwable e) {
+                            Log.e("eee", e.toString());
+                            Toast.makeText(MainActivity.this, "请求失败" + e.toString(), Toast.LENGTH_LONG).show();
+                        }
 
-                            @Override
-                            public void onNext(PrePayFeed prePayFeed) {
+                        @Override
+                        public void onNext(PrePayFeed prePayFeed) {
+                            try {
                                 if (prePayFeed != null) {
-
+                                    currentPayType = YHKPAYTYPE;
+                                    PrePayBean prePayBean = new Gson().fromJson(prePayFeed.getResult(), PrePayBean.class);
+                                    currentPrePayBean = prePayBean;
+                                    AppConfig.NOTIFYURL = prePayBean.getCbUrl();
+                                    FunctionXinDaLu functionXinDaLu = new FunctionXinDaLu(MainActivity.this);
+                                    functionXinDaLu.bankCardPay(Float.parseFloat(prePayBean.getTotalAmountDue()), prePayBean.getBizGuid());
                                 }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                onError(e);
                             }
-                        });
-                    }
+                        }
+                    });
                     break;
                 default:
                     break;
