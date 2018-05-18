@@ -2,6 +2,8 @@ package com.pos.posscan.activity;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothClass;
+import android.content.ActivityNotFoundException;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -17,6 +19,7 @@ import com.pos.posscan.bean.PosPayNotifyFeed;
 import com.pos.posscan.bean.PosPayNotifyPoJo;
 import com.pos.posscan.bean.PrePayBean;
 import com.pos.posscan.bean.PrePayFeed;
+import com.pos.posscan.utils.Arith;
 import com.pos.posscan.utils.DateUtil;
 import com.pos.posscan.utils.FunctionXinDaLu;
 
@@ -55,10 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.item_yhk)
     public void onClickXianJinBtn() {
-        FunctionXinDaLu functionXinDaLu = new FunctionXinDaLu(MainActivity.this);
-        functionXinDaLu.bankCardPay(0.1f,"");
-//        Intent intent = new Intent(MainActivity.this, ScanActivity.class);
-//        startActivityForResult(intent, YHKSCANNERCODE);
+        Intent intent = new Intent(MainActivity.this, ScanActivity.class);
+        startActivityForResult(intent, YHKSCANNERCODE);
     }
 
     @OnClick(R.id.item_zfb)
@@ -197,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                                     currentPayType = ZFBPAYTYPE;
                                     AppConfig.NOTIFYURL = prePayBean.getCbUrl();
                                     FunctionXinDaLu functionXinDaLu = new FunctionXinDaLu(MainActivity.this);
-                                    functionXinDaLu.aliPay(Float.parseFloat(prePayBean.getTotalAmountDue()), prePayBean.getBizGuid()+"2");
+                                    functionXinDaLu.aliPay(Float.parseFloat(prePayBean.getTotalAmountDue()), prePayBean.getBizGuid());
                                 }
                             } catch (Exception e) {
                                 e.printStackTrace();
@@ -247,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
-        super.onActivityResult(requestCode, resultCode, data);
+
 
     }
 }

@@ -24,6 +24,7 @@
         android:theme="@style/MyMaterialTheme">
         <activity android:name=".activity.MainActivity"
             android:screenOrientation="portrait"
+            android:launchMode="standard"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -32,7 +33,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activity.ScanActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".activity.ScanActivity"
+            android:launchMode="standard"
+            android:screenOrientation="portrait"></activity>
     </application>
 
 </manifest>
